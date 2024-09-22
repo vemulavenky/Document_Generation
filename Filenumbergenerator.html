@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Number Generation</title>
+    <link rel="stylesheet" href="/frontend/css/styles.css">
+    <script src="https://alcdn.msauth.net/browser/2.33.0/js/msal-browser.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  
+        <div id="fileNumberGenerationSection" style="caret-color: transparent">
+              <div class="container">
+                <div class="header">
+                  <div class="logo">
+                    <img src="assets/image.png" alt="Logo" class="logo-image" />
+                  </div> 
+                  <div class="headerfilenumber">
+                  <h1 class="titleheader">File Number Generation</h1>
+                  </div>
+                  <div class="headeruser">
+                    <div class="tooltipcontainer">
+                        <img id="userIcon" src="./assets/User_Header.png">
+                        <div class="tooltip" id="tooltip">Account Manage for {Full Name of the User}</div>
+                    </div>
+                  
+                    <div id="userInfo"  style="display: none;"> 
+                      <div class="userInfo">
+                      <p id="userFullName" ></p> 
+                      <p id="signOutText">Sign Out</p> 
+                      <img id="addUsers" src="./assets/addUsers.jpg" alt="Add User Icon" title="Add Users">
+                    </div> 
+                   
+                  </div>
+                  
+                </div>
+              </div>
+                <div class="content">
+                  <div class="generate-section">
+                    <div class="section-header">Generate File Number</div>
+                    <div class="first-container">
+                      <div class="form-group country-code-block">
+                        <select id="countryCode" onchange="filterCountryCode()">
+                          <option value="">Select Country Code</option>
+                        </select>
+                      </div>
+        
+                      <div class="form-group">
+                        <select id="costCenter" onchange="filterCostCenter()">
+                          <option value="">Select Cost Center</option>
+                        </select>
+                        <button id="openCostCenterModal" class="small-button" title="Add Cost Center">➕</button>
+                        <button id="editCostCenter" class="small-button" title="Delete Cost Center" >
+                          <i class="fas fa-edit"></i> 
+                        </button>
+                      </div>
+        
+                      <div class="form-group">
+                        <select id="projectName" onchange="filterProjectName()">
+                          <option value="">Select Project Name</option>
+                        </select>
+                        <button id="openProjectNameModal" class="small-button" title="Add Project Name">➕</button>
+                        <button id="editProjectName" class="small-button" title="Delete Project Name" onclick="openEditDocumentTypeModal()">
+                          <i class="fas fa-edit"></i> 
+                        </button>
+                      </div>
+                    </div>
+        
+                    <div class="second-container">
+                      <div class="form-group">
+                        <select id="documentType" onchange="filterDocumentType()">
+                          <option value="">Select Document Type</option>
+                        </select>
+                        <button id="openDocumentTypeModal" class="small-button" title="Add Document type">➕</button>
+                        <button id="editDocumentType" class="small-button" title="Edit Document type" onclick="openEditDocumentTypeModal()">
+                          <i class="fas fa-edit"></i> 
+                        </button>
+                      </div>
+        
+                      <div class="form-group">
+                        <button id="generateFileNumberButton" data-tooltip="! Please Select All DropDowns" title="Based on Selected fields it will generate a new document number">
+                          Generate New Document Number
+                          <span class="tooltip-text">! Please Select All DropDowns</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+        
+                <div class="existing-section"  >
+                  <div class="section-header" id="header">
+                    Existing File Number
+                    <i class="fas fa-search" id="searchIcon" title="Click to search for file number Information"></i>
+                  </div>
+                  <table id="fileNumberTable">
+                    <thead>
+                      <tr>
+                        <th>Document Number</th>
+                        <th>Created Date</th>
+                        <th>Country Code</th>
+                        <th>Cost Center</th>
+                        <th>Project Code</th>
+                        <th>Document Type</th>
+                        <th>Comment</th>
+                        <th>View</th>
+                        <th>Created By</th>
+                      </tr>
+                    </thead>
+                    <tbody id="existingNumbers"></tbody>
+                  </table>
+        
+                  <div id="paginationContainer" class="pagination-container" style="background-color: #ccc; ">
+                    <div id="paginationControls"></div>
+                </div>
+                </div>
+
+                
+              </div>  
+            </div> 
+
+
+        <div id="searchModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeModal">&times;</span>
+                <h1 style="font-size: 25px; background-color: cadetblue; color: white;">Existing File Number Information</h1> 
+                <div class="generate-container">
+                    <div class="models-generate-box">
+                        <input type="text" id="fileNumberInput" placeholder="Enter Existing File Number">
+                        <button type="button" id="generateButton">Submit</button>
+                    </div>
+                </div>
+                <textarea id="responseText" placeholder="File Number Details" readonly></textarea>
+            </div>
+        </div>
+
+        <div id="costCenterModal" class="modal" >
+            <div class="modal-content">
+                <span id="closeCostCenterModal" class="close">&times;</span>
+                <h2>Add Cost Center</h2>
+                <div class="models-generate-box">
+                <input type="text" id="newCostCenter" placeholder="Enter Cost Center">
+                <button id="saveCostCenterButton">Save</button>
+            </div>
+            </div>
+        </div> 
+
+        <div id="editcostCenterModal" class="modal">
+          <div class="modal-content">
+              <span id="closeEditCostCenterModal" class="close">&times;</span>
+              <h2>Update Cost Center</h2>
+              <div class="models-generate-box">
+                  <input type="text" id="newCostCenterEditModal" placeholder="Enter Document Type">
+                  <div class="button-group">
+                      <button id="updateCostCenterButton">Update</button>
+                      <button id="deleteCostCenterButton">Delete</button>
+                  </div>
+              </div>
+          </div>
+        </div>
+
+        <div id="projectNameModal" class="modal">
+            <div class="modal-content">
+                <span id="closeProjectNameModal" class="close">&times;</span>
+                <h2>Add Project Name</h2>
+                <div class="models-generate-box">
+                <input type="text" id="newProjectName" placeholder="Enter Project Name">
+                <button id="saveProjectNameButton" onclick="saveProjectName()">Save</button>
+            </div>
+            </div>
+        </div> 
+
+        <div id="editProjectTypeModal" class="modal" >
+          <div class="modal-content">
+              <span id="closeEditProjectTypeModal" class="close">&times;</span>
+              <h2>Update Project </h2>
+              <div class="models-generate-box">
+                  <input type="text" id="newProjectEditModal" placeholder="Enter Project Name">
+                  <div class="button-group">
+                      <button id="updateProjectNameButton" >Update</button>
+                      <button id="deleteProjectNameButton">Delete</button>
+                  </div>
+              </div>
+          </div>
+        </div>
+
+        <div id="documentTypeModal" class="modal" >
+            <div class="modal-content">
+                <span id="closeDocumentTypeModal" class="close">&times;</span>
+                <h2>Add Document Type</h2>
+                <div class="models-generate-box">
+                <input type="text" id="newDocumentType" placeholder="Enter Document Type">
+                <button id="saveDocumentTypeButton" onclick="saveDocumentType()">Save</button>
+            </div>
+            </div>
+        </div> 
+
+        <div id="editDocumentTypeModal" class="modal">
+          <div class="modal-content">
+              <span id="closeEditDocumentTypeModal" class="close">&times;</span>
+              <h2>Update Document Type</h2>
+              <div class="models-generate-box">
+                  <input type="text" id="newDocumentTypeEditModal" placeholder="Enter Document Type">
+                  <div class="button-group">
+                      <button id="updateDocumentTypeButton" >Update</button>
+                      <button id="deleteDocumentTypeButton" >Delete</button>
+                  </div>
+              </div>
+          </div>
+        </div> 
+
+
+        <div id="detailsModal" class="modal" style="caret-color: transparent">
+            <div class="modal-generation">
+                <span class="close" id="closeDetailsModal">&times;</span> 
+                
+                <div class="Document-details-header"><h2 class="document-details">New Document Number Generation</h2></div>
+                <div class="parent-container">
+                    <div class="info-container">
+                        <div class="info-row">
+                            <span class="key">Country:</span> <span id="modalCountry" class="value"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="key">Cost Center:</span> <span id="modalCostCenter" class="value"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="key">Project:</span> <span id="modalProject" class="value"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="key">Type:</span> <span id="modalType" class="value"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="key">Comment:</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-area">
+                    <textarea id="modalComment" placeholder="Type comment here"></textarea>
+                </div>
+                <button id="detailsGenerateBtn">Generate</button>
+                <div class="generated-number-container">
+                    <div class="generated-number" id="generatedNumber">
+                        Your Generated file number will appear here
+                    </div>
+                    <div class="copy-icon" id="copyIcon" title="Copy" style="opacity: 0.5; cursor: not-allowed;">
+                        <i class="fa-solid fa-copy"></i>
+                    </div>
+                </div>
+                
+                
+            </div>
+        </div>
+
+
+        <div id="eyedetailsModal" class="modal" style="caret-color: transparent">
+            <div class="modal-view">
+                <span class="close" id="closeDetails">&times;</span>
+                
+                <div class="Document-details-header"><h2 class="document-details">Document Details</h2></div>
+                <div class="First-container">
+                    <div class="information-container"> 
+                        <div class="information-row">
+                          <span class="keys">Document Number :</span><span id="modalFileNumber"class="values"></span>
+                        </div>
+                        <div class="information-row">
+                          <span class="keys">Country:</span><span id="modalCountrycode" class="values"></span>
+                        </div>
+                        <div class="information-row">
+                          <span class="keys">Cost Center:</span><span id="modalCostCentercode" class="values"></span>
+                        </div>
+                        <div class="information-row">
+                          <span class="keys">Project:</span> <span id="modalProjectcode" class="values"></span>
+                        </div>
+                        <div class="information-row">
+                          <span class="keys">Type:</span> <span id="modalTypecode" class="values"></span>
+                        </div>
+                        <div class="information-row">
+                          <span class="keys">Created Date : <span id = "modalDate" class="values" ></span>
+                        </div>
+                        <div class="information-row">
+                        <span class="keys">Created By :</span><span id="modalCreatedBy" class="values"></span>
+                        </div>
+                        <div class="details-row">
+                            <span class="keys">Comment:
+                            <span id="modalComments"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+
+
+        <div id="myModal" class="customModal" >
+          <div class="customModalContent">
+            <span class="close" id="closeUserModal">&times;</span>
+            <h2>Add User</h2>
+            <input type="email" id="textbox1" placeholder="Email ID">
+            <div id="suggestions-email" ></div>
+            <select id="textbox2">
+              <option value="" disabled selected>Role</option>
+              <option value="SuperAdmin">SuperAdmin</option>
+              <option value="Admin">Admin</option>
+            </select>
+            <input type="text" id="textbox3" placeholder="Full Name">
+            <div style="display: flex; gap: 20px;
+            justify-content: center;
+            align-items: center;">
+            <button id="addButton" title="Add Users">Add</button>
+            <button id="updateButton" style="width: 50%;" title="Update Role">Update</button>
+          </div>
+          </div>
+        </div> 
+
+        
+
+        
+    <script src="js/emailDropdown.js" type="module"></script>
+
+    <script src="js/ui/dropdowns_filteration_pagination_component.js" type="module"></script>
+    <script src="js/ui/models_components.js" type="module"></script>
+    <script src="js/ui/existing_file_number_details_model_component.js" type="module"></script>
+    <script src="js/ui/generate_file_number_component.js"  type="module"></script>
+    <script src="js/Services/existing_file_number_details_service.js"  type="module"></script>
+    <script src="js/Services/generate_file_number_service.js"  type="module"></script>
+    <script src="js/Services/add_button_services.js"  type="module"></script> 
+    <script src="js/ui/copy-icon.js" ></script>
+    <script src="js/main.js" type="module"></script> 
+    <script src="js/userProfile.js"></script>
+   
+    
+    
+</body>
+</html>
